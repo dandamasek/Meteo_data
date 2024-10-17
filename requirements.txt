@@ -1,6 +1,1 @@
-Flask
-requests
-aiohttp
-asyncio
-icecream
-h5py
+pywgrib2_s

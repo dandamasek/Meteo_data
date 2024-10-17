@@ -1,13 +1,20 @@
 import aiohttp
 import asyncio
 import bz2
+import os
 from datetime import datetime
-from icecream import ic
 from config import (
-   DOMAIN,
-   ALADIN_ATTRIBUTES,
+    DOMAINLA,
+    DOMAINCZ,
+    SUBDOMAINCZ,
+    ALADIN_ATTRIBUTES,
 )
 
+DOMAIN = DOMAINCZ
+DIRNAME = "CZ"
+
+# UTC HOUR
+TIME = "12"
 
 
 async def fetch_data(URL):
@@ -20,49 +27,45 @@ async def fetch_data(URL):
                 return data  # Return only the data
             else:
                 # Handle the error case and return None
-                ic(f"Failed to fetch data, status code: {response.status}")
+                print(f"Failed to fetch data, status code: {response.status}")
                 return None
 
 async def main():
     # Format as YYYYMMDDTT where TT is time [00UTF,12UTF]
-    from datetime import datetime
-    current_date = datetime.now().strftime("%Y%m%d00")  
-    print(current_date)
+    current_date = datetime.now().strftime(f"%Y%m%d{TIME}")  
 
     # Cycle through all ALADIN_ATTRIBUTES
-    for i in ALADIN_ATTRIBUTES:
-        print(ALADIN_ATTRIBUTES[i])
-
-        CURRENTFILE = f"{current_date}_{ALADIN_ATTRIBUTES[i]}.grb.bz2"
-        ic(CURRENTFILE)
+    for attribute in ALADIN_ATTRIBUTES:
+        CURRENTFILE = f"{current_date}_{ALADIN_ATTRIBUTES[attribute]}.grb.bz2"
 
         # The URL you want to fetch data from
-        URL = f"{DOMAIN}{CURRENTFILE}"
-        ic(URL)
+        URL = f"{DOMAIN}{TIME}{SUBDOMAINCZ}{CURRENTFILE}"
+ 
 
         # Await fetch_data to get the binary content
         data = await fetch_data(URL)
 
         if data:
-            output_file_bz2 = CURRENTFILE.split('/')[-1]
-            ic(output_file_bz2)
+            output_file_grb = CURRENTFILE.replace('.bz2', '')  # Change to .grb
 
             # Decompress the bz2 content
             try:
                 decompressed_data = bz2.decompress(data)
             except Exception as e:
-                ic(f"Failed to decompress bz2 data: {e}")
+                print(f"Failed to decompress bz2 data: {e}")
                 return
 
-            # Change the extension to .grb for the decompressed data
-            output_file_grb = output_file_bz2.replace('.bz2', '')
+            # Create directory if it doesn't exist
+            os.makedirs(f"{DIRNAME}", exist_ok=True)
+            os.makedirs(f"{DIRNAME}/{TIME}", exist_ok=True)
+            os.makedirs(f"{DIRNAME}/{TIME}/{current_date}", exist_ok=True)
 
             # Write the decompressed content (GRB file) to a new file
-            with open(output_file_grb, 'wb') as file:
+            with open(f"{DIRNAME}/{TIME}/{current_date}/" + output_file_grb, 'wb') as file:
                 file.write(decompressed_data)
-                ic(f"Saved decompressed GRB data to {output_file_grb}")
+                print(f"Saved decompressed GRB data to {output_file_grb}\n")
         else:
-            ic("Failed to fetch the data.")
+            print("Failed to fetch the data.\n")
 
 # To run the async function
 if __name__ == "__main__":

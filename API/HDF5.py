@@ -1,7 +1,6 @@
 import aiohttp
 import asyncio
 import bz2
-from icecream import ic
 from config import (
     DOMAIN,
     CLIMATE_DATA,
