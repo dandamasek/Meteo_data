@@ -6,6 +6,7 @@
 # WEATHER_RADAR_COMPOSITE_ECHOTOP = "meteorology/weather/radar/composite/echotop/hdf5/T_PADV23_C_OKPR_20240925150500.hdf"
 # WEATHER_NWP_ALADIN = "meteorology/weather/nwp_aladin/CZ_1km/00/ALADCZ1K4opendata_2024100200_SURFPREC_TOTAL.grb.bz2"
 
+BUCKETNAME = "meteodatabucket"
 
 DOMAINLA = "https://opendata.chmi.cz/meteorology/weather/nwp_aladin/Lambert_2.3km/00/ALADLAMB4opendata_"
 

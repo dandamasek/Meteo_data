@@ -1,21 +1,23 @@
 import aiohttp
 import asyncio
 import bz2
-import os
+import io
 from datetime import datetime
+from UploadFile import upload_file
+
 from config import (
     DOMAINLA,
     DOMAINCZ,
     SUBDOMAINCZ,
     ALADIN_ATTRIBUTES,
+    BUCKETNAME,
 )
 
 DOMAIN = DOMAINCZ
 DIRNAME = "CZ"
 
 # UTC HOUR
-TIME = "12"
-
+TIME = "00"
 
 async def fetch_data(URL):
     async with aiohttp.ClientSession() as session:
@@ -55,15 +57,10 @@ async def main():
                 print(f"Failed to decompress bz2 data: {e}")
                 return
 
-            # Create directory if it doesn't exist
-            os.makedirs(f"{DIRNAME}", exist_ok=True)
-            os.makedirs(f"{DIRNAME}/{TIME}", exist_ok=True)
-            os.makedirs(f"{DIRNAME}/{TIME}/{current_date}", exist_ok=True)
+            #upload to AWS bucket
+            file_in_memory = io.BytesIO(decompressed_data)
+            upload_file(file_in_memory, BUCKETNAME, output_file_grb)
 
-            # Write the decompressed content (GRB file) to a new file
-            with open(f"{DIRNAME}/{TIME}/{current_date}/" + output_file_grb, 'wb') as file:
-                file.write(decompressed_data)
-                print(f"Saved decompressed GRB data to {output_file_grb}\n")
         else:
             print("Failed to fetch the data.\n")
 
