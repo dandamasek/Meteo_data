@@ -14,7 +14,7 @@ DOMAIN = DOMAINCZ
 DIRNAME = "CZ"
 
 # UTC HOUR
-TIME = "12"
+TIME = "00"
 
 async def fetch_data(URL):
     async with aiohttp.ClientSession() as session:
