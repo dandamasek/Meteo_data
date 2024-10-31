@@ -1,8 +1,7 @@
 # Meteo_data
 Získávání meteorologických dat
-## API
-Obsahuje: 
-AladinDonwloadAWS.py - slouží ke stažení dat
+## API 
+AladinDonwloadAWS.py - slouží ke stahování dat
 
 AladinDonwloadLOC.py - testování na local machine
 
